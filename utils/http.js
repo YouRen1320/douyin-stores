@@ -55,7 +55,15 @@ class http {
 
         try {
             const res = await this.promisify(tt.request, options);
-            return res.data;
+            if (res.statusCode >= 200 && res.statusCode < 300) {
+                return res.data;
+            }
+
+            // tt.request 会在 HTTP 4xx/5xx 时进入 success，需要在这里统一转成异常。
+            const error = new Error(`请求失败：HTTP ${res.statusCode}`);
+            error.statusCode = res.statusCode;
+            error.data = res.data;
+            throw error;
         } catch (error) {
             // 处理401错误的不同情况
             if (error.statusCode === 401 && error.data && error.data.code) {
