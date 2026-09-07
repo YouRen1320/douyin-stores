@@ -1,4 +1,4 @@
-# Douyin Mini Program Utilities
+# 抖音小程序工具示例
 
 本项目为 **抖音小程序** 开发提供了一套常用工具封装，包括：
 
@@ -35,8 +35,11 @@
 utils/
 ├── http.js
 ├── store.js
+├── login.js
 └── userStore.js
 ```
+
+使用前必须在 `utils/http.js` 中设置自己的 HTTPS 后端地址，并在抖音开放平台配置对应的请求域名。示例不包含服务端、账号体系或生产凭据。
 
 ## 使用方法
 
@@ -58,8 +61,7 @@ await http.post("/api/login", { username: "test", password: "123456" });
 在页面中绑定全局 store：
 
 ```js
-import { Store } from "@/utils/store";
-import userStore from "@/utils/userStore";
+const userStore = require("../../utils/userStore.js");
 
 Page({
   data: {},
@@ -94,5 +96,11 @@ const maskedPhone = userStore.getMaskedPhone();
 console.log(maskedPhone); // 例如 138****1234
 ```
 
----
+## 错误边界
 
+- `2xx` 响应返回业务数据；HTTP `4xx/5xx` 会被转为异常，调用方应使用 `try/catch` 处理。
+- `401` 的 `INVALID`、`EXPIRED`、`NO_PERMISSION` 示例只演示前端提示，真实项目仍应由服务端校验会话和权限。
+- 登录示例会把 token 写入小程序本地存储；不要在仓库、日志或截图中提交真实 token、openid、unionid。
+- 本仓库是工具与页面骨架，尚未提供自动化测试和可直接上线的完整应用。
+
+---
